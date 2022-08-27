@@ -45,7 +45,7 @@ type PatternPath = string;
 
 export function getFilesUsingPatternPath(path: PatternPath, rootDir?: string): Promise<string[]> {
     return new Promise((s, r) => {
-        glob(Path.join(rootDir || "", "..", path), (err, files) => {
+        glob(Path.join(rootDir || "", path), (err, files) => {
             if (err) r(err);
             s(files);
         })
@@ -57,3 +57,5 @@ export function timeNow() {
     const timenow = new Date();
     return `${timenow.toLocaleDateString().replaceAll(" ", "").replaceAll("/", ":")}:${timenow.toLocaleTimeString().replaceAll(" ", "")}`
 }
+
+export const clappy = (arr: any[], quantity: number = arr.length - 1) => arr.sort(_ => Math.random() - .5).slice(0, quantity);

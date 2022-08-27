@@ -1,7 +1,7 @@
 
 import Ffmpeg from "fluent-ffmpeg";
 import path from "path";
-import { getFormat, getName, timeNow } from "./utils";
+import { clappy, getFilesUsingPatternPath, getFormat, getName, timeNow } from "./utils";
 import fs from "fs/promises";
 import { randomUUID } from "crypto";
 
@@ -71,30 +71,6 @@ export function takeSoundOffOfVideo(clip: string) {
     })
 }
 
-export function normalizeVideo(input: string): Promise<string> {
-    const out = path.join(tmp.normalizedPath, getName(input, '.mp4'))
-    return new Promise((s, r) => {
-        Ffmpeg()
-            // .on("progress", onProgress)
-            // .on("start", cmdline => {
-            //     // console.log(`Command line: ${cmdline}`);
-            // })
-            .on("progress", (progress) => {
-                process.stdout.clearLine(0);
-                process.stdout.cursorTo(0);
-                process.stdout.write(`normalizing progress ${Math.floor(+progress.percent || 0)}%...`);
-            })
-            .on("error", r)
-            .on("end", () => {
-                s(out);
-            })
-            .input(input)
-            .videoCodec("copy")
-            .outputOptions(["-af loudnorm=I=-16:LRA=1:TP=-1.5"])
-            .output(out)
-            .run();
-    })
-}
 
 export async function combineMultipleAudioFiles(inputs: string[]): Promise<string> {
     const out = path.join(tmp.audios, randomUUID() + getName(inputs[0], ".mp3"))
@@ -310,7 +286,7 @@ export async function combineOneVideo(intro: string, clips: string[], voices: st
 
 
         const clipsTS = await convertMultipleToTS(clipsWithAudio);
-        const introTS = await convertToTS(path.join(dev.intros, intro), () => { })
+        const introTS = await convertToTS(intro, () => { })
 
 
         // console.log(clipsTS);
@@ -331,4 +307,48 @@ export async function combineOneVideo(intro: string, clips: string[], voices: st
     } catch (err) {
         console.error(err)
     }
+}
+
+
+export function normalizeVideo(input: string): Promise<string> {
+    const tstart = Date.now();
+
+    const out = path.join(tmp.normalizedPath, getName(input, '.mp4'))
+    return new Promise((s, r) => {
+        Ffmpeg()
+            // .on("progress", onProgress)
+            // .on("start", cmdline => {
+            //     // console.log(`Command line: ${cmdline}`);
+            // })
+            .on("progress", (progress) => {
+                process.stdout.clearLine(0);
+                process.stdout.cursorTo(0);
+                process.stdout.write(`normalizing progress ${Math.floor(+progress.percent || 0)}%...`);
+            })
+            .on("error", r)
+            .on("end", () => {
+                console.log(`done(${Math.floor((Date.now() - tstart) / 1000)}s)`)
+                s(out);
+            })
+            .input(input)
+            .videoCodec("copy")
+            .outputOptions(["-af loudnorm=I=-16:LRA=1:TP=-1.5"])
+            .output(out)
+            .run();
+    })
+}
+
+
+export async function makeVideo(options: {
+    /** the quantity of clips and voices to use */
+    clipsQuantity?: number
+}) {
+    const clips = await getFilesUsingPatternPath(path.join(dev.clips, "*"))
+    const voices = await getFilesUsingPatternPath(path.join(dev.voices, "*"));
+    const intros = await getFilesUsingPatternPath(path.join(dev.intros, "*"))
+    await combineOneVideo(
+        clappy(intros, 1)[0],
+        clappy(clips, options.clipsQuantity),
+        voices
+    );
 }

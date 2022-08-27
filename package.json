@@ -13,6 +13,6 @@
         "start": "node .",
         "compile": "npx tsc",
         "watch": "npx tsc --watch",
-        "dev": "npx nodemon lib/server.js"
+        "dev": "npx nodemon lib/server.js --watch lib"
     }
 }
