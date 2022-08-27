@@ -1,6 +1,10 @@
 node_modules
+
 .history
+
 test
-*.log
+dev
 
 lib
+
+*.log
