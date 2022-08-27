@@ -4,7 +4,9 @@ import path from "path";
 import { getFormat, getName, timeNow } from "./utils";
 import fs from "fs/promises";
 import { randomUUID } from "crypto";
-const devPath = "../test/";
+
+const devPath = "../dev/";
+
 const dev = {
     intros: path.join(__dirname, devPath, "intros"),
     clips: path.join(__dirname, devPath, "clips"),
