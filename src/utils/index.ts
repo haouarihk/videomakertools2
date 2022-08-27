@@ -45,7 +45,7 @@ type PatternPath = string;
 
 export function getFilesUsingPatternPath(path: PatternPath, rootDir?: string): Promise<string[]> {
     return new Promise((s, r) => {
-        glob(Path.join(rootDir || "", path), (err, files) => {
+        glob(Path.join(rootDir || "", "..", path), (err, files) => {
             if (err) r(err);
             s(files);
         })
@@ -55,5 +55,5 @@ export function getFilesUsingPatternPath(path: PatternPath, rootDir?: string): P
 
 export function timeNow() {
     const timenow = new Date();
-    return `[${timenow.toLocaleDateString().replaceAll(" ", "").replaceAll("/", ":")}:${timenow.toLocaleTimeString().replaceAll(" ", "")}]`
+    return `${timenow.toLocaleDateString().replaceAll(" ", "").replaceAll("/", ":")}:${timenow.toLocaleTimeString().replaceAll(" ", "")}`
 }

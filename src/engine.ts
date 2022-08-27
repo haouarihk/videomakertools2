@@ -74,9 +74,9 @@ export function normalizeVideo(input: string): Promise<string> {
     return new Promise((s, r) => {
         Ffmpeg()
             // .on("progress", onProgress)
-            .on("start", cmdline => {
-                // console.log(`Command line: ${cmdline}`);
-            })
+            // .on("start", cmdline => {
+            //     // console.log(`Command line: ${cmdline}`);
+            // })
             .on("progress", (progress) => {
                 process.stdout.clearLine(0);
                 process.stdout.cursorTo(0);
@@ -99,9 +99,9 @@ export async function combineMultipleAudioFiles(inputs: string[]): Promise<strin
 
     return new Promise((s, r) => {
         let ff = Ffmpeg()
-            .on("start", cmdline => {
-                // console.log(`Command line: ${cmdline}`);
-            })
+            // .on("start", cmdline => {
+            //     // console.log(`Command line: ${cmdline}`);
+            // })
             .on("error", r)
             .on("end", () => {
                 s(out);
@@ -123,9 +123,9 @@ export async function removeSoundFromVideo(target: string): Promise<string> {
 
     return new Promise((s, r) => {
         Ffmpeg()
-            .on("start", cmdline => {
-                // console.log(`Command line: ${cmdline}`);
-            })
+            // .on("start", cmdline => {
+            //     // console.log(`Command line: ${cmdline}`);
+            // })
             .on("error", r)
             .on("end", () => {
                 s(out);
@@ -146,9 +146,9 @@ export function convertToTS(clip: string, onProgress: (k: { percent: string }) =
         Ffmpeg()
             .input(clip)
             .on("progress", onProgress)
-            .on("start", cmdline => {
-                // console.log(`Command line: ${cmdline}`);
-            })
+            // .on("start", cmdline => {
+            //     // console.log(`Command line: ${cmdline}`);
+            // })
             .on("error", r)
             .on("end", () => {
                 s(out);
@@ -194,9 +194,9 @@ export async function addAudioToClip(clip: string, voice: string, onProgress: (p
     // console.log(out, clipWithVoicePath, getName(clip, ".mp4"))
     return new Promise((solve, reject) => {
         Ffmpeg()
-            .on("start", cmdline => {
-                console.log(`Command line: ${cmdline}`);
-            })
+            // .on("start", cmdline => {
+            //     console.log(`Command line: ${cmdline}`);
+            // })
             .on("progress", onProgress)
             .on("error", reject)
             .on("end", () => {
@@ -244,9 +244,9 @@ export async function getAudioFromVideo(target: string): Promise<string> {
     const out = path.join(tmp.audios, randomUUID() + getName(target, ".mp3"));
     return new Promise((s, r) => {
         Ffmpeg()
-            .on("start", cmdline => {
-                // console.log(`Command line: ${cmdline}`);
-            })
+            // .on("start", cmdline => {
+            //     // console.log(`Command line: ${cmdline}`);
+            // })
             .on("error", r)
             // .on("progress", (progress) => {
             //     process.stdout.clearLine(0);
@@ -272,9 +272,9 @@ export async function combine(files: string[], outputTarget?: string): Promise<s
 
     return new Promise((solve, reject) => {
         Ffmpeg()
-            .on("start", cmdline => {
-                // console.log(`Command line: ${cmdline}`);
-            })
+            // .on("start", cmdline => {
+            //     // console.log(`Command line: ${cmdline}`);
+            // })
             .on("error", reject)
             .on("progress", (progress) => {
                 process.stdout.clearLine(0);
@@ -323,7 +323,7 @@ export async function combineOneVideo(intro: string, clips: string[], voices: st
 
         // clear temps
         console.log("cleaning temps...")
-        // await clearTmp();
+        await clearTmp();
 
         console.log(`done(${Math.floor((Date.now() - tstart) / 1000)}s):`, outputFile);
     } catch (err) {

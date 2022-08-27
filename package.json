@@ -1,1 +1,18 @@
-{"dependencies":{"@types/ffmpeg-concat":"^1.1.2","@types/fluent-ffmpeg":"^2.1.20","@types/glob":"^7.2.0","@types/node":"^18.7.13","fluent-ffmpeg":"^2.1.2","glob":"^8.0.3"}}
+{
+    "dependencies": {
+        "@types/ffmpeg-concat": "^1.1.2",
+        "@types/fluent-ffmpeg": "^2.1.20",
+        "@types/glob": "^7.2.0",
+        "@types/node": "^18.7.13",
+        "fluent-ffmpeg": "^2.1.2",
+        "glob": "^8.0.3"
+    },
+    "license": "MIT",
+    "main": "lib/server.js",
+    "scripts": {
+        "start": "node .",
+        "compile": "npx tsc",
+        "watch": "npx tsc --watch",
+        "dev": "npx nodemon lib/server.js"
+    }
+}
