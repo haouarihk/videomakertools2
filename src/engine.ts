@@ -1,7 +1,7 @@
 
 import Ffmpeg from "fluent-ffmpeg";
 import path from "path";
-import { clappy, getFilesUsingPatternPath, getFormat, getName, timeNow } from "./utils";
+import { clappy, getFilesUsingPatternPath, getFormat, getName, getRandomItem, timeNow } from "./utils";
 import fs from "fs/promises";
 import { randomUUID } from "crypto";
 
@@ -72,9 +72,13 @@ export function takeSoundOffOfVideo(clip: string) {
 }
 
 
-export async function combineMultipleAudioFiles(inputs: string[]): Promise<string> {
-    const out = path.join(tmp.audios, randomUUID() + getName(inputs[0], ".mp3"))
+export async function combineMultipleAudioFiles(_inputs: string[]): Promise<string> {
+    const inputs = _inputs.filter(e => !!e);
+    if (inputs.length < 2)
+        throw Error("Needs to be 2 audio files or more for them to combine");
 
+
+    const out = path.join(tmp.audios, randomUUID() + getName(inputs[0], ".mp3"))
     return new Promise((s, r) => {
         let ff = Ffmpeg()
             // .on("start", cmdline => {
@@ -84,6 +88,7 @@ export async function combineMultipleAudioFiles(inputs: string[]): Promise<strin
             .on("end", () => {
                 s(out);
             });
+
 
         inputs.forEach(e => ff = ff.input(e));
 
@@ -164,6 +169,7 @@ export async function addAudioToClip(clip: string, voice: string, onProgress: (p
     const videoWithNoAudio = await removeSoundFromVideo(clip);
 
     const videoAudio = await getAudioFromVideo(clip);
+
     const combinedAudioFile = await combineMultipleAudioFiles([videoAudio, voice])
 
     // i want to take the audio of the video out, in the tmp/audios
@@ -197,13 +203,14 @@ export async function addAudioToClip(clip: string, voice: string, onProgress: (p
 }
 
 
+
 export function addAudiosToClips(clips: string[], voices: string[]): Promise<string[]> {
     return new Promise((s, r) => {
         console.log("----------- adding audios to clips...")
         const newClips: string[] = [];
         clips.forEach(async (clip, i) => {
             const tstart = Date.now();
-            newClips.push(await addAudioToClip(clip, voices[i], (progress) => {
+            newClips.push(await addAudioToClip(clip, getRandomItem(voices), (progress) => {
                 process.stdout.clearLine(0);
                 process.stdout.cursorTo(0);
                 process.stdout.write(`[${i + 1}/${clips.length}] progress ${Math.floor(+progress.percent || 0)}%...`);
@@ -345,7 +352,11 @@ export async function makeVideo(options: {
 }) {
     const clips = await getFilesUsingPatternPath(path.join(dev.clips, "*"))
     const voices = await getFilesUsingPatternPath(path.join(dev.voices, "*"));
-    const intros = await getFilesUsingPatternPath(path.join(dev.intros, "*"))
+    const intros = await getFilesUsingPatternPath(path.join(dev.intros, "*"));
+
+    console.log({ clips, voices, intros })
+
+
     await combineOneVideo(
         clappy(intros, 1)[0],
         clappy(clips, options.clipsQuantity),

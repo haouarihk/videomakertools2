@@ -59,3 +59,8 @@ export function timeNow() {
 }
 
 export const clappy = (arr: any[], quantity: number = arr.length - 1) => arr.sort(_ => Math.random() - .5).slice(0, quantity);
+
+
+export function getRandomItem<T extends unknown>(arr: T[]): T {
+    return (arr || []).sort(_ => Math.random() - 0.5)[0];
+}

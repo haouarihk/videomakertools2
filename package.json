@@ -14,5 +14,8 @@
         "compile": "npx tsc",
         "watch": "npx tsc --watch",
         "dev": "npx nodemon lib/server.js --watch lib"
+    },
+    "devDependencies": {
+        "typescript": "^4.8.2"
     }
 }
